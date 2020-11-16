@@ -3,14 +3,7 @@ const router = express.Router();
 const {Workout} = require('../models')
 const validateSession = require('../middleware/validateSession');
 
-// router.get("/", (req, res) => {
-//     Workout.findAll()
-//     .then(workout => res.status(200).json(workout))
-//     .catch(err => res.status(500).json({
-//         error: err
-//     }))
-// })
-
+// ********** LOG WORKOUT ********** //
 router.post('/', async (req, res) => {
     
     try {
@@ -38,5 +31,13 @@ router.post('/', async (req, res) => {
         })
     }
 });
+
+// ********** GET ALL WORKOUTS FOR INDIVIDUAL USER ********** //
+router.get("/", (req, res) => {
+    Workout.findAll()
+    .then(workouts => res.status(200).json(workouts))
+    .catch(err => res.status(500).json({ error: err }))
+});
+
 
 module.exports = router; 
