@@ -16,9 +16,9 @@ app.use(express.json());
 
 app.use("/user", controllers.usercontroller);
 
+app.use(require('./middleware/validateSession'));
 app.use("/log", controllers.workoutlogcontroller);
 
-app.use(require('./middleware/validateSession'));
 
 
 // db.authenticate()

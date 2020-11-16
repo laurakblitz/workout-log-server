@@ -16,10 +16,16 @@ router.post('/', async (req, res) => {
     try {
 
         const {description, definition, results} = req.body;
+        const owner_id = req.user.id;
 
         let newWorkout = await Workout.create({
-            description, definition, results, owner_id: req.user.id 
+            description, definition, results, owner_id: owner_id
         });
+
+        // let newWorkout = await Workout.create({
+        //     description, definition, results
+        // });
+
         res.status(200).json({
             workout: newWorkout,
             message: "Workout logged!"
