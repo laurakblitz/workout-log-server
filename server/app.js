@@ -20,19 +20,6 @@ app.use(require('./middleware/validateSession'));
 app.use("/log", controllers.workoutlogcontroller);
 
 
-
-// db.authenticate()
-// .then(() => db.sync()) // => {force: true}
-// .then(() => {
-//     app.listen(process.env.PORT, () => console.log(`[Server: ] App is listening on Port ${process.env.PORT}`));
-// })
-// .catch((err) => {
-//     console.log("[Server: ] Server Crashed");
-//     console.error(err);
-// })
-
-
-
 app.listen(3005, function(){
     console.log('App is listening on port 3005')
 });

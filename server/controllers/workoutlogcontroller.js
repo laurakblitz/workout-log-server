@@ -15,10 +15,6 @@ router.post('/', async (req, res) => {
             description, definition, results, owner_id: owner_id
         });
 
-        // let newWorkout = await Workout.create({
-        //     description, definition, results
-        // });
-
         res.status(200).json({
             workout: newWorkout,
             message: "Workout logged!"
@@ -32,46 +28,49 @@ router.post('/', async (req, res) => {
     }
 });
 
-// ********** GET ALL WORKOUTS FOR INDIVIDUAL USER ********** //
-router.get("/", (req, res) => {
-    Workout.findAll()
-    .then(workouts => res.status(200).json(workouts))
-    .catch(err => res.status(500).json({ error: err }))
-});
+// ********** GET ALL LOGS FOR INDIVIDUAL USER ********** //
+    router.get("/", validateSession, (req, res) => {
+        let owner_id = req.user.id
+        Workout.findAll({
+            where: { owner_id: req.user.id }
+        })
+          .then((workouts) => res.status(200).json(workouts))
+          .catch((err) => res.status(500).json({ error: err }));
+      });
 
-// ********** GET WORKOUTS BY ID ********** //
-router.get('/:id', function (req, res) {
-
-    Workout.findAll({
-        where: { id: req.user.id }   
+// ********** GET INDIVIDUAL LOG BY ID FOR INDIVIDUAL USER ********** //
+router.get("/:id", validateSession, (req, res) => {
+    
+    Workout.findOne({
+        where: { id: req.params.id, owner_id: req.user.id }
     })
-    .then(workouts => res.status(200).json(workouts))
-    .catch(err => res.status(500).json({ error: err}))
-});
-
+      .then((workouts) => res.status(200).json(workouts))
+      .catch((err) => res.status(500).json({ error: err }));
+  });
 
 // ********** ALLOW INDIVIDUAL LOGS TO BE UPDATED BY A USER ********** //
-router.put('/:id', validateSession, function (req, res) {
-
+router.put("/:id", validateSession, function (req, res) {
+    
     const updateWorkoutLog = {
         description: req.body.description,
         definition: req.body.definition,
-        results: req.body.results
+        results: req.body.results,
     };
 
-    const query = { where: { id: req.params.id, owner: req.user.id } }
-    .then(workouts => res.status(200).json(workouts))
-    .catch(err => res.status(500).json({ error: err}))
-});
+    const query = { where: { id: req.params.id, owner_id: req.user.id } };
 
-// ********** DELETE ********** //
-router.delete("/delete/:id", validateSession, function (req, res) {
-    const query = { where: { id: req.params.id, owner: req.user.id } };
-
-    Workout.destroy(query)
-    .then(() => res.status(200).json({ message: "Workout Removed" }))
+    Workout.update(updateWorkoutLog, query)
+    .then((workouts) => res.status(200).json(workouts))
     .catch((err) => res.status(500).json({ error: err }));
 });
 
+// ********** ALLOW INDIVIDUAL LOGS TO BE DELETED BY A USER ********** //
+router.delete('/:id', validateSession, (req, res) => {
+    Workout.destroy({
+        where: { id: req.params.id, owner_id: req.user.id }
+    })
+    .then(workout => res.status(200).json(pie))
+    .catch(err => res.json({error: err}))
+})
 
 module.exports = router; 
