@@ -39,5 +39,39 @@ router.get("/", (req, res) => {
     .catch(err => res.status(500).json({ error: err }))
 });
 
+// ********** GET WORKOUTS BY ID ********** //
+router.get('/:id', function (req, res) {
+
+    Workout.findAll({
+        where: { id: req.user.id }   
+    })
+    .then(workouts => res.status(200).json(workouts))
+    .catch(err => res.status(500).json({ error: err}))
+});
+
+
+// ********** ALLOW INDIVIDUAL LOGS TO BE UPDATED BY A USER ********** //
+router.put('/:id', validateSession, function (req, res) {
+
+    const updateWorkoutLog = {
+        description: req.body.description,
+        definition: req.body.definition,
+        results: req.body.results
+    };
+
+    const query = { where: { id: req.params.id, owner: req.user.id } }
+    .then(workouts => res.status(200).json(workouts))
+    .catch(err => res.status(500).json({ error: err}))
+});
+
+// ********** DELETE ********** //
+router.delete("/delete/:id", validateSession, function (req, res) {
+    const query = { where: { id: req.params.id, owner: req.user.id } };
+
+    Workout.destroy(query)
+    .then(() => res.status(200).json({ message: "Workout Removed" }))
+    .catch((err) => res.status(500).json({ error: err }));
+});
+
 
 module.exports = router; 
